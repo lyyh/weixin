@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd"
+        >
+
+    <!--<mvc:resources location="/easyui/" mapping="/easyui/**"></mvc:resources>
+    <mvc:resources location="/css/" mapping="/css/**"/>
+    <mvc:resources location="/js/" mapping="/js/**"/>
+    <mvc:resources location="/images/" mapping="/images/**"/>-->
+
+
+    <!-- 自动搜索@Controller标注的类 -->
+    <context:component-scan base-package="com.htgy.controller"/>
+
+    <!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <!-- messageConverters属性的配置可以解决JSON返回中文为问号的问题 -->
+        <property name="messageConverters">
+            <list>
+                <!--自定义注解数据格式化类来对页面传过来的字符串进行格式化-->
+                <bean class = "org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name = "supportedMediaTypes">
+                        <list>
+                            <value>text/plain;charset=UTF-8</value>
+                            <value>text/html;charset=utf-8</value>
+                        </list>
+                    </property>
+                </bean>
+                <!--&lt;!&ndash; 避免IE执行AJAX时,返回JSON出现下载文件 &ndash;&gt;-->
+                <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                <value>application/json;charset=UTF-8</value>
+                </list>
+                </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 注解依赖的适配器 DefaultAnnotationHandlerMapping -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+    <!--<property name="interceptors">-->
+             <!--&lt;!&ndash;多个拦截器,顺序执行 &ndash;&gt;-->
+            <!--<list>-->
+                <!--<ref bean="sysInterceptor"/>-->
+            <!--</list>-->
+        <!--</property>-->
+        <!--拦截器-->
+        <!--  	 <mvc:interceptors>
+                <mvc:interceptor>
+                    <mvc:mapping path="/"/>
+                    <mvc:exclude-mapping path="/jjh/"/>
+                    <bean class="com.school.controller.interceptor.LoginInterceptor"/>
+                </mvc:interceptor>
+            </mvc:interceptors>     -->
+    </bean>
+
+    <!--<mvc:interceptors>-->
+        <!--<mvc:interceptor>-->
+            <!--<mvc:mapping path="/testResponse.do"/>-->
+            <!--<mvc:exclude-mapping path="/system/testServlet.do"/>-->
+            <!--<bean class="com.htgy.interceptor.SysInterceptor"></bean>-->
+        <!--</mvc:interceptor>-->
+    <!--</mvc:interceptors>-->
+     <!--可拦截用户请求 -->
+    <!--<bean id="sysInterceptor" class="com.htgy.interceptor.SysInterceptor"></bean>-->
+
+    <!--<mvc:annotation-driven>-->
+        <!--<mvc:message-converters register-defaults="true">-->
+            <!--&lt;!&ndash; 避免IE执行AJAX时,返回JSON出现下载文件 &ndash;&gt;-->
+            <!--<bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">-->
+                <!--<property name="s upportedMediaTypes">-->
+                    <!--<list>-->
+                        <!--<value>application/json;charset=UTF-8</value>-->
+                        <!--<value>text/html;charset=utf-8</value>-->
+                    <!--</list>-->
+                <!--</property>-->
+            <!--</bean>-->
+        <!--</mvc:message-converters>-->
+        <!--<mvc:return-value-handlers>-->
+            <!--<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">-->
+                <!--<property name="interceptors">-->
+                    <!--<list>-->
+                        <!--<ref bean="sysInterceptor"/>-->
+                    <!--</list>-->
+                <!--</property>-->
+            <!--</bean>-->
+        <!--</mvc:return-value-handlers>-->
+    <!--</mvc:annotation-driven>-->
+
+    <!--对静态资源的访问，使用默认的Servlet(defaultServlet)来响应静态文件-->
+    <mvc:default-servlet-handler/>
+
+
+    <aop:aspectj-autoproxy proxy-target-class="false"/>
+    <!--<mvc:view-controller path="/header" view-name="/admin/themes/header"/>-->
+
+
+    <!--配置视图-->
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix">
+            <value>/</value>
+        </property>
+        <property name="suffix">
+            <value>.jsp</value>
+        </property>
+    </bean>
+
+    <!--文件上传-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="1000000000"/>
+    </bean>
+
+   <!--拦截器-->
+    <!--  	 <mvc:interceptors>
+            <mvc:interceptor>
+                <mvc:mapping path="/"/>
+                <mvc:exclude-mapping path="/jjh/"/>
+                <bean class="com.school.controller.interceptor.LoginInterceptor"/>
+            </mvc:interceptor>
+        </mvc:interceptors>     -->
+</beans>
